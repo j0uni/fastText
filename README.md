@@ -1,34 +1,51 @@
-# FastText
+# FastText ⚡
 
-A plain-text editor for macOS built to launch as fast as possible: about 90 ms from process start to first window drawn on Apple Silicon.
+**Tired of bloated, slow-loading text editors on macOS?** Same. You just wanted to look at a file. Instead you got a splash screen, a "restoring your session" spinner, and a plugin update.
 
-Pure AppKit in a single Objective-C file. There is no Swift runtime, SwiftUI, nib, `NSDocument` or state restoration, and no work happens at launch that the first window doesn't need.
+FastText opens in about **90 ms**. That's from process start to the first window drawn on an M-series Mac. Blink and you've already missed it.
 
-## Features
+## How is it so fast?
 
-- Multiple windows, New / Open / Open Recent / Save / Save As, drag and drop files onto a window or the app icon
-- Registers as an "Open With" candidate for text, JSON, JSONL, source code and other files, without becoming the default handler
-- Settings (⌘,): color presets (Dracula, Nord, Solarized, Monokai, Gruvbox, …) or custom colors, fixed-width font and size
-- Wrap lines, line numbers, highlight current line, show whitespace, tab width (also in the View menu)
-- UTF-8 files, with a Latin-1 fallback that saves back in the same encoding
+By doing nothing it doesn't have to.
 
-## Build
+- One Objective-C file, AppKit only. No Swift runtime, no SwiftUI, no nibs, no `NSDocument`, no state restoration.
+- No tabs, no plugins, no cloud, no telemetry, no "what's new".
+- The Settings window, font list and line-number gutter don't exist until you ask for them.
 
-Requires macOS 14+ and the Xcode command line tools.
+It's a plain-text editor that edits plain text. Revolutionary, I know.
+
+## What you do get
+
+- Windows, Open Recent, drag and drop. Drop a file on the window or the Dock icon.
+- "Open With" for text, JSON, JSONL, source code and whatever else you throw at it. It never steals your default app.
+- Color presets (Dracula, Nord, Solarized, Monokai, Gruvbox, Amber and more), custom colors, your font, your size.
+- Wrap lines, line numbers, current-line highlight, show whitespace, tab width.
+- Multi-million-line files. Jumping to the end of 2M lines takes about 150 ms.
+
+## Install
+
+Grab the zip from [Releases](https://github.com/j0uni/fastText/releases), unzip, and drag `FastText.app` into `/Applications`.
+
+It's ad-hoc signed, not notarized (I'm not paying Apple to tell you it's fine). So the first time, right-click ▸ Open, or:
+
+```sh
+xattr -dr com.apple.quarantine /Applications/FastText.app
+```
+
+Needs macOS 14+. The release build is Apple Silicon. For Intel, build it yourself with `make ARCH=x86_64`.
+
+## Build it yourself
+
+You need the Xcode command line tools. That's all.
 
 ```sh
 make            # build/FastText.app
-make bench      # exec -> first window drawn, in ms
-make deploy     # build and install to /Applications (DEST=... to override)
-make icon       # regenerate resources/AppIcon.icns
+make bench      # prints ms from exec to first window
+make deploy     # build and copy to /Applications
 ```
 
-## Install from a release
+## Notes
 
-Download `FastText-<version>-macos-arm64.zip` from the Releases page and move `FastText.app` to `/Applications`. The app is ad-hoc signed, not notarized, so on first launch right-click it and choose Open, or run `xattr -dr com.apple.quarantine /Applications/FastText.app`.
+Design decisions and timing breakdown are in [NOTES.md](NOTES.md). Most of the 90 ms is AppKit waking up, and the app's own code is the small part.
 
-See [NOTES.md](NOTES.md) for design decisions and measurements.
-
-## License
-
-MIT, see [LICENSE](LICENSE).
+MIT licensed. Do whatever you like.
